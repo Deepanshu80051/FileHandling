@@ -1,0 +1,402 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+
+class Program
+{
+    static string filePath = "data.txt";
+
+    static void Main()
+    {
+        int choice = 0;
+
+        do
+        {
+            try
+            {
+                Console.WriteLine("\n--- FILE HANDLING CRUD OPERATIONS ---");
+                Console.WriteLine("1. Create (Add Record)");
+                Console.WriteLine("2. Read (View Records)");
+                Console.WriteLine("3. Update Record");
+                Console.WriteLine("4. Delete Record");
+                Console.WriteLine("5. Exit");
+                Console.Write("Enter your choice: ");
+
+                choice = Convert.ToInt32(Console.ReadLine());
+
+                switch (choice)
+                {
+                    case 1:
+                        CreateRecord();
+                        break;
+                    case 2:
+                        ReadRecords();
+                        break;
+                    case 3:
+                        UpdateRecord();
+                        break;
+                    case 4:
+                        DeleteRecord();
+                        break;
+                    case 5:
+                        Console.WriteLine("Exiting...");
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice!");
+                        break;
+                }
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Please enter a valid number.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+        } while (choice != 5);
+    }
+
+    // CREATE
+    static void CreateRecord()
+    {
+        try
+        {
+            Console.Write("Enter ID: ");
+            string id = Console.ReadLine();
+
+            Console.Write("Enter Name: ");
+            string name = Console.ReadLine();
+
+            Console.Write("Enter Salary: ");
+            string salary = Console.ReadLine();
+
+            string record = id + "," + name + "," + salary;
+            File.AppendAllText(filePath, record + Environment.NewLine);
+
+            Console.WriteLine("Record added successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error while creating record: " + ex.Message);
+        }
+    }
+
+    // READ
+    static void ReadRecords()
+    {
+        try
+        {
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("No records found.");
+                return;
+            }
+
+            string[] records = File.ReadAllLines(filePath);
+
+            Console.WriteLine("\nID\tName\tSalary");
+            Console.WriteLine("------------------------");
+
+            foreach (string record in records)
+            {
+                string[] data = record.Split(',');
+                Console.WriteLine($"{data[0]}\t{data[1]}\t{data[2]}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error while reading file: " + ex.Message);
+        }
+    }
+
+    // UPDATE
+    static void UpdateRecord()
+    {
+        try
+        {
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("File not found.");
+                return;
+            }
+
+            Console.Write("Enter ID to update: ");
+            string id = Console.ReadLine();
+
+            string[] records = File.ReadAllLines(filePath);
+            bool found = false;
+
+            for (int i = 0; i < records.Length; i++)
+            {
+                string[] data = records[i].Split(',');
+
+                if (data[0] == id)
+                {
+                    Console.Write("Enter new Name: ");
+                    string name = Console.ReadLine();
+
+                    Console.Write("Enter new Salary: ");
+                    string salary = Console.ReadLine();
+
+                    records[i] = id + "," + name + "," + salary;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found)
+            {
+                File.WriteAllLines(filePath, records);
+                Console.WriteLine("Record updated successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Record not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error while updating record: " + ex.Message);
+        }
+    }
+
+    // DELETE
+    static void DeleteRecord()
+    {
+        try
+        {
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("File not found.");
+                return;
+            }
+
+            Console.Write("Enter ID to delete: ");
+            string id = Console.ReadLine();
+
+            string[] records = File.ReadAllLines(filePath);
+            List<string> updatedRecords = new List<string>();
+            bool found = false;
+
+            foreach (string record in records)
+            {
+                string[] data = record.Split(',');
+
+                if (data[0] != id)
+                    updatedRecords.Add(record);
+                else
+                    found = true;
+            }
+
+            if (found)
+            {
+                File.WriteAllLines(filePath, updatedRecords);
+                Console.WriteLine("Record deleted successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Record not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error while deleting record: " + ex.Message);
+        }
+    }
+}
+_---_-------_-----------------
+using System;
+using System.IO;
+using System.Collections.Generic;
+
+class Program
+{
+    static string filePath = "data.txt";
+
+    static void Main()
+    {
+        int choice;
+
+        do
+        {
+            Console.WriteLine("\n1.Create  2.Read  3.Update  4.Delete  5.Exit");
+            Console.Write("Enter choice: ");
+
+            try
+            {
+                choice = int.Parse(Console.ReadLine());
+            }
+            catch
+            {
+                Console.WriteLine("Invalid input");
+                choice = 0;
+            }
+
+            switch (choice)
+            {
+                case 1: Create(); break;
+                case 2: Read(); break;
+                case 3: Update(); break;
+                case 4: Delete(); break;
+                case 5: Console.WriteLine("Exit"); break;
+                default: Console.WriteLine("Wrong choice"); break;
+            }
+
+        } while (choice != 5);
+    }
+
+    // CREATE
+    static void Create()
+    {
+        try
+        {
+            Console.Write("ID: ");
+            string id = Console.ReadLine();
+
+            Console.Write("Name: ");
+            string name = Console.ReadLine();
+
+            Console.Write("Salary: ");
+            string salary = Console.ReadLine();
+
+            File.AppendAllText(filePath, id + "," + name + "," + salary + "\n");
+            Console.WriteLine("Record added");
+        }
+        catch
+        {
+            Console.WriteLine("Error while adding record");
+        }
+    }
+
+    // READ
+    static void Read()
+    {
+        try
+        {
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("File not found");
+                return;
+            }
+
+            foreach (string line in File.ReadAllLines(filePath))
+                Console.WriteLine(line);
+        }
+        catch
+        {
+            Console.WriteLine("Error while reading file");
+        }
+    }
+
+    // UPDATE
+    static void Update()
+    {
+        try
+        {
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("File not found");
+                return;
+            }
+
+            Console.Write("Enter ID to update: ");
+            string id = Console.ReadLine();
+
+            string[] lines = File.ReadAllLines(filePath);
+            bool found = false;
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].StartsWith(id + ","))
+                {
+                    Console.Write("New Name: ");
+                    string name = Console.ReadLine();
+
+                    Console.Write("New Salary: ");
+                    string salary = Console.ReadLine();
+
+                    lines[i] = id + "," + name + "," + salary;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found)
+            {
+                File.WriteAllLines(filePath, lines);
+                Console.WriteLine("Record updated");
+            }
+            else
+                Console.WriteLine("Record not found");
+        }
+        catch
+        {
+            Console.WriteLine("Error while updating record");
+        }
+    }
+
+    // DELETE
+    static void Delete()
+    {
+        try
+        {
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("File not found");
+                return;
+            }
+
+            Console.Write("Enter ID to delete: ");
+            string id = Console.ReadLine();
+
+            List<string> list = new List<string>();
+            bool found = false;
+
+            foreach (string line in File.ReadAllLines(filePath))
+            {
+                if (!line.StartsWith(id + ","))
+                    list.Add(line);
+                else
+                    found = true;
+            }
+
+            if (found)
+            {
+                File.WriteAllLines(filePath, list);
+                Console.WriteLine("Record deleted");
+            }
+            else
+                Console.WriteLine("Record not found");
+        }
+        catch
+        {
+            Console.WriteLine("Error while deleting record");
+        }
+    }
+}
+
+
+-----------------------
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        int[] arr = { 10, 25, 5, 40, 15 };
+
+        int largest = arr[0];
+
+        for (int i = 1; i < arr.Length; i++)
+        {
+            if (arr[i] > largest)
+            {
+                largest = arr[i];
+            }
+        }
+
+        Console.WriteLine("Largest number is: " + largest);
+    }
+}
